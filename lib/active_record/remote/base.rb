@@ -9,11 +9,11 @@ module ActiveRecord
     class Base
 
       include Virtus.model
-      extend  ActiveRecord::Helpers::AssociationHelper
-      extend  ActiveRecord::Helpers::ValidationHelper
-      extend  ActiveRecord::Helpers::RequestHelper
-      extend  ActiveRecord::Helpers::AuthenticationHelper
-      include ActiveRecord::Helpers::SerializationHelper
+      extend  ActiveRecord::Remote::Helpers::AssociationHelper
+      extend  ActiveRecord::Remote::Helpers::ValidationHelper
+      extend  ActiveRecord::Remote::Helpers::RequestHelper
+      extend  ActiveRecord::Remote::Helpers::AuthenticationHelper
+      include ActiveRecord::Remote::Helpers::SerializationHelper
 
       def save
       end

@@ -40,7 +40,8 @@ module ActiveRecord::Remote
 
       def association_klass(name)
         singular = name.to_s.singularize
-        ActiveRecord::Remote::Record.const_get(singular.classify)
+        parent_module = to_s.split('::')[0..-2].join('::').constantize
+        parent_module.const_get(singular.classify)
       end
 
     end
