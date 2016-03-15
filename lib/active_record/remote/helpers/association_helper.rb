@@ -4,8 +4,8 @@ module ActiveRecord::Remote
 
       def has_many(association, options = {})
         association_name = parse_association_name(association, options)
-        set_inflection(association, options[:collection])
-        self.attribute association, Array[association_klass(association_name)]
+        set_inflection(association, options)
+        self.attribute association, Array[association_klass(association_name)], options
       end
 
       def parse_association_name(association, options = {})
@@ -16,8 +16,8 @@ module ActiveRecord::Remote
         end
       end
 
-      def set_inflection(association, collection)
-        return if collection.nil?
+      def set_inflection(association, options)
+        return if options[:collection].nil?
         # since RLM has an irregular API we have to adjust the inflections
         # so we can have children collections that do not match the parents
         # i.e.
@@ -33,8 +33,15 @@ module ActiveRecord::Remote
         # ActiveSupport::Inflector.inflections do |inflect|
         #   inflect.singular 'DETAILS', 'LINE'
         # end
+        if options[:strict]
+          assoc_name = association.to_s
+          collection = options[:collection].to_s
+        else
+          assoc_name = association.to_s.upcase
+          collection = options[:collection].to_s.upcase
+        end
         ActiveSupport::Inflector.inflections do |inflect|
-          inflect.singular association.to_s.upcase, collection.to_s.upcase
+          inflect.singular assoc_name, collection
         end
       end
 
