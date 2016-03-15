@@ -15,7 +15,7 @@ class Hash
       soap_builder.Body do
 
         soap_builder.tag!(options[:operation], xmlns: options[:namespace]) do
-          soap_builder.filterXML "\n#{build_internal_xml(options)}"
+          soap_builder.tag!(options[:base_element], "\n#{build_internal_xml(options)}")
         end
 
       end

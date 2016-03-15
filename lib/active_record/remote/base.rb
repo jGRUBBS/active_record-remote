@@ -8,7 +8,7 @@ module ActiveRecord
   module Remote
     class Base
 
-      class_attribute :action_path, :api_type, :operation_path
+      class_attribute :action_path, :api_type, :operation_path, :base_element_name
 
       include Virtus.model
       include ActiveModel::Validations

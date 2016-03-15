@@ -10,6 +10,10 @@ module ActiveRecord::Remote
         self.operation_path = kind
       end
 
+      def base_element(name)
+        self.base_element_name = name
+      end
+
     end
   end
 end
