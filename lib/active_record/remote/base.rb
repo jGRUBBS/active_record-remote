@@ -18,7 +18,7 @@ module ActiveRecord
       include ActiveRecord::Remote::Helpers::XMLHelper
       include ActiveRecord::Remote::Helpers::SOAPHelper
 
-      attr_accessor :response
+      attr_accessor :response, :raw_data, :parsed_data
 
       def self.api_type(type)
         self.api_type = type
@@ -36,6 +36,7 @@ module ActiveRecord
         request_body = send("as_#{api_type}")
         raw_response = client.request(request_body)
         @response    = handle_response(raw_response)
+        valid?
       end
 
       def valid?
