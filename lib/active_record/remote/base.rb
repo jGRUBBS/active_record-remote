@@ -18,6 +18,8 @@ module ActiveRecord
       include ActiveRecord::Remote::Helpers::XMLHelper
       include ActiveRecord::Remote::Helpers::SOAPHelper
 
+      attr_accessor :response
+
       def self.api_type(type)
         self.api_type = type
       end
@@ -31,10 +33,36 @@ module ActiveRecord
       end
 
       def save
-        base_module  = self.class.to_s.split('::').first.constantize
-        client       = base_module.const_get("Client").new(self.class.action_path)
         request_body = send("as_#{api_type}")
-        client.request(request_body)
+        raw_response = client.request(request_body)
+        @response    = handle_response(raw_response)
+      end
+
+      def valid?
+        if response.present?
+          # all model validations may pass, but response
+          # may have contained an error message
+          response.success?
+        else
+          # use model validations
+          super
+        end
+      end
+
+      def base_module
+        self.class.to_s.split('::').first.constantize
+      end
+
+      def handle_response(response)
+        base_module.const_get("Response").new(
+          operation: self.class.operation_path,
+          raw_response: response,
+          instance: self
+        )
+      end
+
+      def client
+        base_module.const_get("Client").new(self.class.action_path)
       end
 
     end
