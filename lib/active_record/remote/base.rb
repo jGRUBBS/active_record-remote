@@ -1,20 +1,22 @@
 require 'active_record/remote/helpers/association_helper'
 require 'active_record/remote/helpers/request_helper'
-require 'active_record/remote/helpers/serialization_helper'
 require 'active_record/remote/helpers/xml_helper'
 require 'active_record/remote/helpers/soap_helper'
+require 'active_record/remote/helpers/authentication_helper'
+require 'active_record/remote/helpers/xml_serialization_helper'
 
 module ActiveRecord
   module Remote
     class Base
 
-      class_attribute :action_path, :api_type, :operation_path, :base_element_name
+      class_attribute :action_path, :operation_path, :base_element_name,
+                      :api_type, :registered_associations
 
       include Virtus.model
       include ActiveModel::Validations
+      include ActiveModel::Serialization
       extend  ActiveRecord::Remote::Helpers::AssociationHelper
       extend  ActiveRecord::Remote::Helpers::RequestHelper
-      include ActiveRecord::Remote::Helpers::SerializationHelper
       include ActiveRecord::Remote::Helpers::XMLHelper
       include ActiveRecord::Remote::Helpers::SOAPHelper
 
@@ -30,6 +32,18 @@ module ActiveRecord
 
       def custom_options
         # overwrite in subclass to provide custom options to initalizer
+      end
+
+      def attributes
+        # Virtus attributes has symbolized keys and ActiveModel
+        # serialization depends on string keys
+        super.deep_transform_keys(&:to_s)
+      end
+
+      def serializable_hash(options = {})
+        # option[:include] is necessary for serialization
+        # to work for associations
+        super(options.merge(include: registered_associations))
       end
 
       def save

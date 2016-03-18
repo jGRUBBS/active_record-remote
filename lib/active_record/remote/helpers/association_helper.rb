@@ -5,7 +5,15 @@ module ActiveRecord::Remote
       def has_many(association, options = {})
         association_name = parse_association_name(association, options)
         set_inflection(association, options)
-        self.attribute association, Array[association_klass(association_name)], options
+        register_association(association)
+        attribute association, Array[association_klass(association_name)], options
+      end
+
+      private
+
+      def register_association(association)
+        self.registered_associations = [] if registered_associations.blank?
+        self.registered_associations << association
       end
 
       def parse_association_name(association, options = {})
@@ -18,8 +26,8 @@ module ActiveRecord::Remote
 
       def set_inflection(association, options)
         return if options[:collection].nil?
-        # since RLM has an irregular API we have to adjust the inflections
-        # so we can have children collections that do not match the parents
+        # for irregular APIs we have to adjust the inflections can have
+        # children collections that do not match the parents
         # i.e.
         # <DETAILS>
         #   <LINE>
