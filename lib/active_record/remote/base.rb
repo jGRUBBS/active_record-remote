@@ -33,9 +33,10 @@ module ActiveRecord
       end
 
       def save
-        request_body = send("as_#{api_type}")
-        raw_response = client.request(request_body)
-        @response    = handle_response(raw_response)
+        request_body    = send("as_#{api_type}")
+        client.api_type = api_type
+        raw_response    = client.request(request_body)
+        @response       = handle_response(raw_response)
         valid?
       end
 
