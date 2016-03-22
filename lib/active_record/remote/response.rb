@@ -4,6 +4,8 @@ module ActiveRecord
 
       attr_accessor :parsed_response, :options
 
+      alias_method :parsed, :parsed_response
+
       def initialize(options)
         @options = options
         handle_response(options[:raw_response])
