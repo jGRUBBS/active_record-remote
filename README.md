@@ -21,6 +21,7 @@ Or install it yourself as:
 ## TODO
 - [ ] implement for JSON
 - [ ] implement for Flat File
+- [ ] implement Rspec
 
 ## Contributing
 
