@@ -1,6 +1,6 @@
 # ActiveRecord::Remote
 
-TODO: Write a gem description
+This gem is a work in progress. The goal is to create a library that allows Ruby wrappers to be agnostic of the communication method. SOAP, XML, JSON, and Flat File all can be written in a similar format. To see a working example for a SOAP API [jGRUBBS/rlm_logistics](https://github.com/jGRUBBS/rlm_logistics).
 
 ## Installation
 
@@ -18,9 +18,9 @@ Or install it yourself as:
 
     $ gem install active_record-remote
 
-## Usage
-
-TODO: Write usage instructions here
+## TODO
+- [] implement for JSON
+- [] implement for Flat File
 
 ## Contributing
 
