@@ -33,11 +33,28 @@ module ActiveRecord
       end
 
       def save
+        @response = handle_response(request)
+        valid?
+      end
+
+      def self.where(attrs)
+        instance = new(attrs)
+        instance.response = instance.handle_response(instance.request)
+        instance.parse_records
+      end
+
+      def self.all
+        where({})
+      end
+
+      def request
         request_body    = send("as_#{api_type}")
         client.api_type = api_type
-        raw_response    = client.request(request_body)
-        @response       = handle_response(raw_response)
-        valid?
+        client.request(request_body)
+      end
+
+      def update_attributes(attrs)
+        attrs.each { |k, v| send("#{k}=", v) }
       end
 
       def valid?
@@ -55,11 +72,34 @@ module ActiveRecord
         self.class.to_s.split('::').first.constantize
       end
 
+      def full_module
+        self.class.to_s.split('::')[0..-2].join('::').constantize
+      end
+
+      def record_class
+        self.class.to_s.split('::').last
+      end
+
+      def parse_records
+        data = response.data.is_a?(Array) ? response.data : [response.data]
+        return [] if data.compact.empty?
+        data.flat_map do |data_item|
+          instance = self.class.new
+          read_attributes = "#{record_class}ReadAttributes"
+          if full_module.const_defined?(read_attributes)
+            instance.extend(read_attributes.constantize)
+          end
+          attrs = data_item.transform_keys! {|k| k.downcase.to_sym }
+          instance.update_attributes(attrs)
+          instance
+        end
+      end
+
       def handle_response(response)
         base_module.const_get("Response").new(
-          operation: self.class.operation_path,
+          operation:    self.class.operation_path,
           raw_response: response,
-          instance: self
+          instance:     self
         )
       end
 
