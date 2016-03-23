@@ -19,8 +19,8 @@ Or install it yourself as:
     $ gem install active_record-remote
 
 ## TODO
-- [] implement for JSON
-- [] implement for Flat File
+- [ ] implement for JSON
+- [ ] implement for Flat File
 
 ## Contributing
 
