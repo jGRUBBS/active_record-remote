@@ -40,7 +40,7 @@ module ActiveRecord
       def self.where(attrs)
         instance = new(attrs)
         instance.response = instance.handle_response(instance.request)
-        instance.parse_records
+        instance.parse_records rescue []
       end
 
       def self.all
