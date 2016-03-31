@@ -24,7 +24,7 @@ class Hash
   end
 
   def build_internal_xml(options = {})
-    options[:builder] ||= Builder::XmlMarkup.new(indent: options[:indent])
+    options[:builder] ||= Builder::XmlMarkup.new(indent: 0)
     builder = options[:builder]
 
     root = ActiveSupport::XmlMini.rename_key(options[:root].to_s, options)
@@ -33,8 +33,7 @@ class Hash
       each { |key, value| ActiveSupport::XmlMini.to_tag(key, value, options) }
       yield builder if block_given?
     end
-
-    builder.target!.gsub(" ", "")
+    builder.target!
   end
 
 end
