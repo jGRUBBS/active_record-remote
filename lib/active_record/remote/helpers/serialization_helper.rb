@@ -5,6 +5,7 @@ module ActiveRecord::Remote
       def serializable_hash
         Hash.new.tap do |attribute_hash|
           attribute_set.each do |attribute|
+            next if attribute.options[:internal]
             serialize_attribute(attribute_hash, attribute)
           end
         end
